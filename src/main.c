@@ -26,6 +26,7 @@ char status_str[30];
 
 // FUNCTION DECLARATIONS
 void main(void);
+void init_GPIOC(void);
 void display(void);
 
 // MAIN FUNCTION
@@ -48,8 +49,18 @@ void main(void)
 
 void display(void) {
 	sprintf(str,"%d", robot_state.movement);
-	lcd_putstring("str");
+	lcd_putstring(str);
 	lcd_command(LINE_TWO);
 	sprintf(status_str, "IR0:%d-IR1:%d", robot_state.ir_left, robot_state.ir_right);
 	lcd_putstring(status_str);
 }
+
+void init_GPIOC(void){
+	RCC -> AHBENR |= RCC_AHBENR_GPIOBEN;
+	GPIOC -> MODER |= GPIO_MODER_MODER12_0;
+	GPIOC -> MODER |= GPIO_MODER_MODER13_0;
+	GPIOC -> PUPDR |= GPIO_PUPDR_PUPDR12_1;
+	GPIOC -> PUPDR |= GPIO_PUPDR_PUPDR13_1;
+}
+
+
