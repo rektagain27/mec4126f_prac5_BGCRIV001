@@ -28,6 +28,7 @@ char status_str[30];
 void main(void);
 void init_GPIOC(void);
 void display(void);
+void sensor_polling(void);
 
 // MAIN FUNCTION
 void main(void)
@@ -55,12 +56,17 @@ void display(void) {
 	lcd_putstring(status_str);
 }
 
-void init_GPIOC(void){
+void init_GPIOA(void){
 	RCC -> AHBENR |= RCC_AHBENR_GPIOBEN;
-	GPIOC -> MODER |= GPIO_MODER_MODER12_0;
-	GPIOC -> MODER |= GPIO_MODER_MODER13_0;
-	GPIOC -> PUPDR |= GPIO_PUPDR_PUPDR12_1;
-	GPIOC -> PUPDR |= GPIO_PUPDR_PUPDR13_1;
+	GPIOA -> MODER |= GPIO_MODER_MODER12_0;
+	GPIOA -> MODER |= GPIO_MODER_MODER13_0;
+	GPIOA -> PUPDR |= GPIO_PUPDR_PUPDR12_1;
+	GPIOA -> PUPDR |= GPIO_PUPDR_PUPDR13_1;
+}
+
+void sensor_polling(void){
+	robot_state.ir_left = GPIOA -> IDR & GPIO_IDR_0;
+	robot_state.ir_right = GPIOA -> IDR & GPIO_IDR_1;
 }
 
 
