@@ -39,10 +39,11 @@ void main(void)
 	robot_state.movement = stop;
 	robot_state.ir_left = LOW;
 	robot_state.ir_right = LOW;
-	display();
 
 	while(1){
-
+		sensor_polling();
+		delay(100000);
+		display();
 	}
 }
 
