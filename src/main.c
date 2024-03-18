@@ -21,20 +21,23 @@ struct robot_status{
 
 
 // GLOBAL CONSTANTS
-
+char str[16];
+char status_str[30];
 
 // FUNCTION DECLARATIONS
 void main(void);
-
+void display(void);
 
 // MAIN FUNCTION
 void main(void)
 {
 	// Power on phase
 	// Robot_state initialised
+	init_LCD();
 	robot_state.movement = stop;
 	robot_state.ir_left = LOW;
 	robot_state.ir_right = LOW;
+	display();
 
 	while(1){
 
@@ -42,3 +45,11 @@ void main(void)
 }
 
 // FUNCTION DEFINITIONS
+
+void display(void) {
+	sprintf(str,"%d", robot_state.movement);
+	lcd_putstring("str");
+	lcd_command(LINE_TWO);
+	sprintf(status_str, "IR0:%d-IR1:%d", robot_state.ir_left, robot_state.ir_right);
+	lcd_putstring(status_str);
+}
