@@ -29,6 +29,8 @@ void main(void);
 void init_GPIOC(void);
 void display(void);
 void sensor_polling(void);
+void init_SW3(void);
+void EXTI3_1_IRQHandler(void);
 
 // MAIN FUNCTION
 void main(void)
@@ -36,6 +38,7 @@ void main(void)
 	// Power on phase
 	// Robot_state initialised
 	init_LCD();
+	display();
 	robot_state.movement = stop;
 	robot_state.ir_left = LOW;
 	robot_state.ir_right = LOW;
@@ -43,6 +46,7 @@ void main(void)
 	while(1){
 		sensor_polling();
 		delay(100000);
+		lcd_command(CLEAR);
 		display();
 	}
 }
@@ -70,4 +74,32 @@ void sensor_polling(void){
 	robot_state.ir_right = GPIOA -> IDR & GPIO_IDR_1;
 }
 
+void init_SW3(void){
+RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+GPIOA->MODER&= ~GPIO_MODER_MODER3;
+GPIOA->PUPDR |= GPIO_PUPDR_PUPDR3_0;
+}
+
+void init_external_interrupts(){
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN;
+	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI3_PA;
+	EXTI-> IMR |= EXTI_IMR_MR3;
+	EXTI-> FTSR |= EXTI_FTSR_TR3;
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
+}
+
+void EXTI2_3_IRQHandler(void){
+	delay(10000);
+	if ( (robot_state.movement == stop)&&(GPIOA -> IDR & GPIO_IDR_3)){
+		robot_state.movement = forward;
+		GPIOB -> ODR |= (GPIO_ODR_2|GPIO_ODR_6);
+		display();
+	} else if ((robot_state.movement == forward)&&(GPIOA -> IDR & GPIO_IDR_3) ){
+		robot_state.movement = stop;
+		GPIOB -> ODR &= ~(GPIO_ODR_2|GPIO_ODR_6);
+		display();
+	}
+
+	EXTI -> PR |= EXTI_PR_PR3;
+}
 
