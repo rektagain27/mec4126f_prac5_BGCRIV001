@@ -89,6 +89,13 @@ void init_external_interrupts(){
 
 }
 
+void init_GPIOB(void){
+RCC-> AHBENR |= RCC_AHBENR_GPIOBEN;
+GPIOB-> MODER |= GPIO_MODER_MODER2_1;
+GPIOB-> MODER |= GPIO_MODER_MODER6_1;
+}
+
+
 void EXTI2_3_IRQHandler(void){
 	// 0.01 second delay
 	delay(10000);
