@@ -86,9 +86,11 @@ void init_external_interrupts(){
 	EXTI-> IMR |= EXTI_IMR_MR3;
 	EXTI-> FTSR |= EXTI_FTSR_TR3;
 	NVIC_EnableIRQ(EXTI2_3_IRQn);
+
 }
 
 void EXTI2_3_IRQHandler(void){
+	// 0.01 second delay
 	delay(10000);
 	if ( (robot_state.movement == stop)&&(GPIOA -> IDR & GPIO_IDR_3)){
 		robot_state.movement = forward;
